@@ -135,7 +135,7 @@ public class NewsActivity extends AppCompatActivity implements NavigationView.On
 
         @Override
         protected void onPostExecute(String s) {
-            mRecycleView.setAdapter(new CardNewsAdapter(newsCall.getNews(s)));
+            mRecycleView.setAdapter(new CardNewsAdapter(newsCall.getNews(s),NewsActivity.this));
             progress.dismiss();
 
             super.onPostExecute(s);

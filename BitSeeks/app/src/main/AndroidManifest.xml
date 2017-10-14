@@ -25,6 +25,10 @@
         <activity
             android:name=".NewsActivity"
             android:label="@string/title_activity_news"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".DetailsActivity"
+            android:label="@string/title_activity_details"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

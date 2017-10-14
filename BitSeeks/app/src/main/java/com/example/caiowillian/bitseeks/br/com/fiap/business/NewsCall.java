@@ -39,11 +39,10 @@ public class NewsCall {
                     news = new News();
 
                     news.setDescription(json.getString("Description"));
-                    //news.setId(json.getInt("Id"));
-                    //news.setBody(json.getString("Body"));
-                    //news.setDataAlteracao(json.getString("DataAlteracao"));
-                    //news.setDataCadastro(json.getString("DataCadastro"));
-
+                    news.setId(json.getInt("Id"));
+                    news.setBody(json.getString("Body"));
+                    news.setDataAlteracao(json.getString("DataAlteracao"));
+                    news.setDataCadastro(json.getString("DataCadastro"));
                     news.setTitle(json.getString("Title"));
 
                     //array = json.getJSONArray("ImgNews");
