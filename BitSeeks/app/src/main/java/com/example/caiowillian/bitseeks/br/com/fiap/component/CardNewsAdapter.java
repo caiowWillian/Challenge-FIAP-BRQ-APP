@@ -45,6 +45,13 @@ public class CardNewsAdapter extends RecyclerView.Adapter<CardNewsAdapter.ViewHo
         holder.lblDtPost.setText("Postado em: "+l.get(position).getDataCadastro());
         holder.lblTitle.setText(l.get(position).getTitle());
         holder.lblDescription.setText(l.get(position).getDescription());
+
+
+        if(l.get(position).getImgNews() != null)
+            holder.lblTitle.setText(l.get(position).getImgNews().getFileName());
+
+
+
         holder.btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -1,5 +1,6 @@
 package com.example.caiowillian.bitseeks.br.com.fiap.business;
 
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.caiowillian.bitseeks.br.com.fiap.models.ImgNews;
@@ -20,6 +21,7 @@ import java.util.List;
  */
 
 public class NewsCall {
+
 
     public NewsCall(){}
 
@@ -60,12 +62,24 @@ public class NewsCall {
 
                     }
                     */
-                    if(imgNews != null)
-                        news.setImgNews(imgNews);
+
+
+                    //ImgNewsCall im = new ImgNewsCall();
+
+                    //String rs = im.getImgJSON(Integer.toString(news.getId()));
+                    //news.setImgNews(im.getImgNews(rs));
+
+                    //Log.i("Debug","Img Async - "+rs);
+
+
+                    //GetImgAsync getImgAsync = new GetImgAsync();
+                    //getImgAsync.execute(Integer.toString(news.getId()));
+                    //news.setImgNews(getImgAsync.getImgNews());
+
+                    //if(imgNews != null)
+                        //news.setImgNews(imgNews);
 
                     l.add(news);
-
-                    imgNews = null;
                     news = null;
                 }
             }catch(Exception e){}
@@ -89,5 +103,29 @@ public class NewsCall {
         }
 
         return null;
+    }
+
+    private class GetImgAsync extends AsyncTask<String,Void,String>{
+        private ImgNewsCall imgNewsCall;
+        private ImgNews imgNews;
+
+        public ImgNews getImgNews(){
+            return imgNews;
+        }
+
+        public GetImgAsync(){
+            imgNewsCall = new ImgNewsCall();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            imgNews = imgNewsCall.getImgNews(s);
+            super.onPostExecute(s);
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            return imgNewsCall.getImgJSON(params);
+        }
     }
 }

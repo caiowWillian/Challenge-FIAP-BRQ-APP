@@ -20,9 +20,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.caiowillian.bitseeks.br.com.fiap.business.ImgNewsCall;
 import com.example.caiowillian.bitseeks.br.com.fiap.business.NewsCall;
 import com.example.caiowillian.bitseeks.br.com.fiap.component.CardNewsAdapter;
 import com.example.caiowillian.bitseeks.br.com.fiap.component.MenuComponent;
+import com.example.caiowillian.bitseeks.br.com.fiap.models.ImgNews;
 import com.example.caiowillian.bitseeks.br.com.fiap.models.News;
 
 import java.util.ArrayList;
@@ -32,6 +34,8 @@ public class NewsActivity extends AppCompatActivity implements NavigationView.On
     private RecyclerView mRecycleView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private CardNewsAdapter adapter;
+    private List<News> listNews;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +68,8 @@ public class NewsActivity extends AppCompatActivity implements NavigationView.On
         mLayoutManager = new LinearLayoutManager(this);
         mRecycleView.setLayoutManager(mLayoutManager);
 
-
-
         new GetNews().execute();
+
     }
 
     @Override
@@ -120,6 +123,44 @@ public class NewsActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    private class GetImgNewsAsync extends AsyncTask<String,Void,String>{
+        private ImgNewsCall imgNewsCall;
+
+        public GetImgNewsAsync(){
+            imgNewsCall = new ImgNewsCall();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            ImgNews imgNews;
+            if(s != null){
+                imgNews = imgNewsCall.getImgNews(s);
+            }
+            //Log.i("imgonpostexecute",s);
+
+            Log.i("Debug","Entry - 1");
+
+            //adapter.notifyDataSetChanged();
+            super.onPostExecute(s);
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            Log.i("Testando","aiaiaiaiaiaiaiiaia");
+
+            String result = imgNewsCall.getImgJSON(params);
+
+
+            if(result != null)
+                Log.i("encontrou?",result);
+            else
+                Log.i("encontrou?","Não");
+            return result;
+        }
+
+
+    }
+
     private class GetNews extends AsyncTask<String,Void,String>{
         private NewsCall newsCall;
         private ProgressDialog progress;
@@ -135,8 +176,19 @@ public class NewsActivity extends AppCompatActivity implements NavigationView.On
 
         @Override
         protected void onPostExecute(String s) {
-            mRecycleView.setAdapter(new CardNewsAdapter(newsCall.getNews(s),NewsActivity.this));
             progress.dismiss();
+
+            listNews = newsCall.getNews(s);
+            adapter = new CardNewsAdapter(listNews,NewsActivity.this);
+            mRecycleView.setAdapter(adapter);
+            String id;
+
+            for(int i = 0; i < listNews.size(); i++)
+                new GetImgNewsAsync().execute(Integer.toString(listNews.get(i).getId()));
+
+
+            //adapter.notifyDataSetChanged();
+            //adapter.notifyItemInserted(1);
 
             super.onPostExecute(s);
         }
