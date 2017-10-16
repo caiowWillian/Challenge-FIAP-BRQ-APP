@@ -23,12 +23,15 @@ import android.widget.Toast;
 import com.example.caiowillian.bitseeks.br.com.fiap.business.ImgNewsCall;
 import com.example.caiowillian.bitseeks.br.com.fiap.business.NewsCall;
 import com.example.caiowillian.bitseeks.br.com.fiap.component.CardNewsAdapter;
+import com.example.caiowillian.bitseeks.br.com.fiap.component.CreateWalletDialog;
 import com.example.caiowillian.bitseeks.br.com.fiap.component.MenuComponent;
 import com.example.caiowillian.bitseeks.br.com.fiap.models.ImgNews;
 import com.example.caiowillian.bitseeks.br.com.fiap.models.News;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import info.blockchain.api.wallet.Wallet;
 
 public class NewsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private RecyclerView mRecycleView;
@@ -53,18 +56,8 @@ public class NewsActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        News n;
-        List<News> l = new ArrayList<News>();
-        for(int i = 0; i < 5; i++){
-            n = new News();
-            n.setTitle("teste"+i+1);
-            l.add(n);
-        }
-
         mRecycleView = (RecyclerView) findViewById(R.id.my_recycler_view);
-
         mRecycleView.setHasFixedSize(true);
-
         mLayoutManager = new LinearLayoutManager(this);
         mRecycleView.setLayoutManager(mLayoutManager);
 
@@ -98,7 +91,7 @@ public class NewsActivity extends AppCompatActivity implements NavigationView.On
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            new CreateWalletDialog(NewsActivity.this).createDialog();
         }
 
         return super.onOptionsItemSelected(item);
@@ -116,8 +109,6 @@ public class NewsActivity extends AppCompatActivity implements NavigationView.On
             startActivity(it);
             finish();
         }
-
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -125,22 +116,22 @@ public class NewsActivity extends AppCompatActivity implements NavigationView.On
 
     private class GetImgNewsAsync extends AsyncTask<String,Void,String>{
         private ImgNewsCall imgNewsCall;
-
-        public GetImgNewsAsync(){
+        private int position;
+        public GetImgNewsAsync(int position){
             imgNewsCall = new ImgNewsCall();
+            this.position = position;
         }
 
         @Override
         protected void onPostExecute(String s) {
-            ImgNews imgNews;
-            if(s != null){
-                imgNews = imgNewsCall.getImgNews(s);
-            }
-            //Log.i("imgonpostexecute",s);
+            ImgNews imgNews = imgNewsCall.getImgNews(s);
 
-            Log.i("Debug","Entry - 1");
+            imgNews = imgNewsCall.getImgNews(s);
 
-            //adapter.notifyDataSetChanged();
+            listNews.get(position).setImgNews(imgNews);
+            Log.i("Debug","Entry - 1" + imgNews.getBase64());
+
+            adapter.notifyDataSetChanged();
             super.onPostExecute(s);
         }
 
@@ -149,16 +140,12 @@ public class NewsActivity extends AppCompatActivity implements NavigationView.On
             Log.i("Testando","aiaiaiaiaiaiaiiaia");
 
             String result = imgNewsCall.getImgJSON(params);
-
-
             if(result != null)
                 Log.i("encontrou?",result);
             else
                 Log.i("encontrou?","Não");
             return result;
         }
-
-
     }
 
     private class GetNews extends AsyncTask<String,Void,String>{
@@ -181,15 +168,9 @@ public class NewsActivity extends AppCompatActivity implements NavigationView.On
             listNews = newsCall.getNews(s);
             adapter = new CardNewsAdapter(listNews,NewsActivity.this);
             mRecycleView.setAdapter(adapter);
-            String id;
 
             for(int i = 0; i < listNews.size(); i++)
-                new GetImgNewsAsync().execute(Integer.toString(listNews.get(i).getId()));
-
-
-            //adapter.notifyDataSetChanged();
-            //adapter.notifyItemInserted(1);
-
+                new GetImgNewsAsync(i).execute(Integer.toString(listNews.get(i).getId()));
             super.onPostExecute(s);
         }
 

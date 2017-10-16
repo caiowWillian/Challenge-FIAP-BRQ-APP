@@ -47,6 +47,8 @@ public class NewsCall {
                     news.setDataCadastro(json.getString("DataCadastro"));
                     news.setTitle(json.getString("Title"));
 
+
+
                     //array = json.getJSONArray("ImgNews");
 
                     /*

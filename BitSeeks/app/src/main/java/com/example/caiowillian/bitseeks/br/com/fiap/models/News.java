@@ -1,5 +1,7 @@
 package com.example.caiowillian.bitseeks.br.com.fiap.models;
 
+import org.jsoup.Jsoup;
+
 /**
  * Created by Caio Willian on 13/10/2017.
  */
@@ -57,9 +59,7 @@ public class News {
         this.description = description;
     }
 
-    public String getBody() {
-        return body;
-    }
+    public String getBody() { return Jsoup.parse(body).text(); }
 
     public void setBody(String body) {
         this.body = body;

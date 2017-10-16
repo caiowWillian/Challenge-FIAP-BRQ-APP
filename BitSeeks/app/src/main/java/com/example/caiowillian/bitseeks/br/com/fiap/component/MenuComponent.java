@@ -19,6 +19,7 @@ public class MenuComponent {
         } else if (id == R.id.nav_gallery) {
             return new Intent(ctx,NewsActivity.class);
         } else if (id == R.id.nav_slideshow) {
+            new CreateWalletDialog(ctx).createDialog();
             return null;
         } else if (id == R.id.nav_manage) {
             return null;

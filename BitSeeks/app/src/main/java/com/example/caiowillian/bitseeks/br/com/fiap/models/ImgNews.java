@@ -20,6 +20,24 @@ public class ImgNews {
     private String fileName;
     private byte[] fileContent;
     private int fileLenght;
+    private String base64;
+    private int newsId;
+
+    public int getNewsId() {
+        return newsId;
+    }
+
+    public void setNewsId(int newsId) {
+        this.newsId = newsId;
+    }
+
+    public String getBase64() {
+        return base64;
+    }
+
+    public void setBase64(String base64) {
+        this.base64 = base64;
+    }
 
     public int getId() {
         return id;

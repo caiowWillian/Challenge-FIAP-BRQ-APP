@@ -1,5 +1,6 @@
 package com.example.caiowillian.bitseeks;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -10,16 +11,22 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.caiowillian.bitseeks.br.com.fiap.business.BlockchainCall;
+import com.example.caiowillian.bitseeks.br.com.fiap.component.CreateWalletDialog;
 import com.example.caiowillian.bitseeks.br.com.fiap.component.ListAdapterCurrency;
 import com.example.caiowillian.bitseeks.br.com.fiap.component.MenuComponent;
 import com.example.caiowillian.bitseeks.br.com.fiap.models.DataMarket;
 
 import java.util.List;
+
+import info.blockchain.api.wallet.Wallet;
+import info.blockchain.api.wallet.entity.CreateWalletResponse;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -57,6 +64,11 @@ public class MainActivity extends AppCompatActivity
 
         GetDataMarket task = new GetDataMarket();
         task.execute();
+
+        new Blockchain().execute();
+
+
+
     }
 
     @Override
@@ -85,6 +97,7 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+             new CreateWalletDialog(MainActivity.this).createDialog();
             return true;
         }
 
@@ -106,6 +119,26 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    private class Blockchain extends AsyncTask<String,Void,String>{
+
+        @Override
+        protected String doInBackground(String... strings) {
+            try{
+                CreateWalletResponse wallet = Wallet.create("https://blockchain.info/"
+                        ,"&ss4´`èUmaS&nh4ForteP4r4UmCaralh00000"
+                        ,"6d40d46a-a878-4817-ae43-f6cb55c660c2");
+
+                //Wallet wallet = new Wallet();
+                //Log.i("Sera",wallet.getIdentifier());
+            }catch(Exception e){
+                Log.i("Sera"," - "+e);
+            }
+
+            return null;
+        }
+    }
+
     private class GetDataMarket extends AsyncTask<String,Void,String> {
 
         private BlockchainCall blockchainCall;
@@ -130,18 +163,8 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(String s) {
             List<DataMarket> market = blockchainCall.GetDataMarket(s);
-            //List<Investiment> investiment = investimentCall.getInvestiment(s);
             String result = "";
-            //for(int i = 0; i < market.size(); i++)
-                //result += investiment.get(0).getName();
-
-
-
             listView.setAdapter(new ListAdapterCurrency(market,MainActivity.this));
-
-            //result = market.get(0).getSymbol();
-
-            //Toast.makeText(MainActivity.this,market.get(0).getLocal(),Toast.LENGTH_LONG).show();
 
             progress.dismiss();
 
