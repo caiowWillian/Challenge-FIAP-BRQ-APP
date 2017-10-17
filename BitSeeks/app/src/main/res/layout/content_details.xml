@@ -28,11 +28,18 @@
                 android:textColor="#000"
                 android:textSize="20dp" />
 
+            <ImageView
+                android:id="@+id/img"
+                android:layout_width="match_parent"
+                android:layout_margin="5dp"
+                android:layout_height="100dp"/>
+
             <TextView
                 android:id="@+id/lblDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
+                android:textColor="#000"
                 android:gravity="center"
                 android:text="TextView" />
 
@@ -40,6 +47,7 @@
                 android:id="@+id/lblBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="#000"
                 android:layout_margin="10dp"
                 android:text="TextView" />
         </LinearLayout>

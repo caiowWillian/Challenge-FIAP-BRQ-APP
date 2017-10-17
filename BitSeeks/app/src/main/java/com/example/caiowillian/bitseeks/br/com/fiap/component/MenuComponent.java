@@ -5,7 +5,9 @@ import android.content.Intent;
 
 import com.example.caiowillian.bitseeks.MainActivity;
 import com.example.caiowillian.bitseeks.NewsActivity;
+import com.example.caiowillian.bitseeks.OrderBookActivity;
 import com.example.caiowillian.bitseeks.R;
+import com.example.caiowillian.bitseeks.br.com.fiap.models.OrderBook;
 
 /**
  * Created by Caio Willian on 13/10/2017.
@@ -20,13 +22,8 @@ public class MenuComponent {
             return new Intent(ctx,NewsActivity.class);
         } else if (id == R.id.nav_slideshow) {
             new CreateWalletDialog(ctx).createDialog();
-            return null;
         } else if (id == R.id.nav_manage) {
-            return null;
-        } else if (id == R.id.nav_share) {
-            return null;
-        } else if (id == R.id.nav_send) {
-            return null;
+            return new Intent(ctx, OrderBookActivity.class);
         }
 
         return null;

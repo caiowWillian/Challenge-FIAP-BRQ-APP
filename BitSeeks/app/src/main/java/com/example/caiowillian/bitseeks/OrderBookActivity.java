@@ -5,53 +5,41 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.util.Log;
+import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import com.example.caiowillian.bitseeks.br.com.fiap.business.BlockchainCall;
+import com.example.caiowillian.bitseeks.br.com.fiap.business.OrderBookCall;
 import com.example.caiowillian.bitseeks.br.com.fiap.component.CreateWalletDialog;
-import com.example.caiowillian.bitseeks.br.com.fiap.component.ListAdapterCurrency;
+import com.example.caiowillian.bitseeks.br.com.fiap.component.ListAdapterOrderBook;
 import com.example.caiowillian.bitseeks.br.com.fiap.component.MenuComponent;
-import com.example.caiowillian.bitseeks.br.com.fiap.models.DataMarket;
+import com.example.caiowillian.bitseeks.br.com.fiap.models.OrderBook;
 
 import java.util.List;
 
-import info.blockchain.api.wallet.Wallet;
-import info.blockchain.api.wallet.entity.CreateWalletResponse;
-
-public class MainActivity extends AppCompatActivity
+public class OrderBookActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private List<OrderBook> l;
     private ListView listView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_order_book);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        listView = (ListView) findViewById(R.id.list_item);
-
-        /*]
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        */
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -62,13 +50,9 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        GetDataMarket task = new GetDataMarket();
-        task.execute();
+        listView = (ListView) findViewById(R.id.list_item_order_book);
 
-        new Blockchain().execute();
-
-
-
+        new GetOrderBookAsync().execute();
     }
 
     @Override
@@ -84,7 +68,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.order_book, menu);
         return true;
     }
 
@@ -97,7 +81,7 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-             new CreateWalletDialog(MainActivity.this).createDialog();
+            new CreateWalletDialog(OrderBookActivity.this).createDialog();
             return true;
         }
 
@@ -108,7 +92,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        Intent it = MenuComponent.actionMenuItem(MainActivity.this,item.getItemId());
+
+        Intent it =  MenuComponent.actionMenuItem(OrderBookActivity.this,item.getItemId());
 
         if(it != null)
             startActivity(it);
@@ -118,54 +103,24 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private class Blockchain extends AsyncTask<String,Void,String>{
+    private class GetOrderBookAsync extends AsyncTask<String,Void,String>{
+        private OrderBookCall orderBookCall;
+        private Dialog progress;
+        public GetOrderBookAsync(){ orderBookCall = new OrderBookCall(); }
 
         @Override
-        protected String doInBackground(String... strings) {
-            try{
-                CreateWalletResponse wallet = Wallet.create("https://blockchain.info/"
-                        ,"&ss4´`èUmaS&nh4ForteP4r4UmCaralh00000"
-                        ,"6d40d46a-a878-4817-ae43-f6cb55c660c2");
-
-                //Wallet wallet = new Wallet();
-                //Log.i("Sera",wallet.getIdentifier());
-            }catch(Exception e){
-                Log.i("Sera"," - "+e);
-            }
-
-            return null;
-        }
-    }
-
-    private class GetDataMarket extends AsyncTask<String,Void,String> {
-
-        private BlockchainCall blockchainCall;
-        private ProgressDialog progress;
-
-        public GetDataMarket(){
-            blockchainCall = new BlockchainCall();
-        }
+        protected void onPreExecute() { progress = ProgressDialog.show(OrderBookActivity.this,"Aguarde...","Carregando dados"); }
 
         @Override
-        protected void onPreExecute(){
-            progress = ProgressDialog.show(MainActivity.this,"Aguarde...","Carregando dados");
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            return blockchainCall.getDataMarketJSON(params);
-
-            //return investimentCall.getInvestimentJSON(params);
+        protected String doInBackground(String... s) {
+            return orderBookCall.getDataMarketJSON(s);
         }
 
         @Override
         protected void onPostExecute(String s) {
-            listView.setAdapter(new ListAdapterCurrency(blockchainCall.GetDataMarket(s),MainActivity.this));
-
             progress.dismiss();
-
+            listView.setAdapter(new ListAdapterOrderBook(orderBookCall.getOrderBook(s),OrderBookActivity.this));
             super.onPostExecute(s);
         }
     }
 }
-
